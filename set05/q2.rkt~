@@ -1,0 +1,97 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname q2) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+;;The program takes a list of(student,class) pairs
+;;and produce list of class rosters,one roster for each class and has
+;;atleast one student enrolled.
+
+
+
+
+(require rackunit)
+(require "extras.rkt")
+(check-location "05" "q2.rkt")
+
+
+(provide
+ enrollment-student
+ enrollment-class
+ make-roster
+ roster-classname
+ roster-students
+ behavior-correct?
+ enrollments-to-rosters)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;DATA-DEFINITIONS:
+
+;;A Student can be of any datatype and may assume that students may
+;;be compared for equality with equal?
+
+;;ListOfStudent
+;;--empty
+;;-(cons Class ListOfStudent)
+
+;;TEMPLATE
+;;LOS-fn : LOS-fn los)
+;; (cond
+;;   [(empty? los) ...]
+;;    [else (... 
+;;     (Student-fn (first los))
+;;     (LOS-fn (rest los)))]))
+
+
+
+;;A Class is any datatype.
+
+;;ListOfClass
+;;--empty 
+;;-(cons Class ListOfClass)
+
+;;TEMPLATE
+;;LOC-fn : LOC -> ?
+;;(define (LOC-fn loc)
+;; (cond
+;;   [(empty? loc) ...]
+;;    [else (... 
+;;     (Class-fn (first loc))
+;;     (LOC-fn (rest loc)))]))
+
+
+(define-struct roster(classname listofstudent))
+
+;;A Roster is a
+;;(make-roster Class ListOfStudent)
+;;INTERPRETATION:
+;;the roster represents list of students in a Class datatype classname.
+;;TEMPLATE
+;;roster-fn :roster-?
+;;(define (roster-fn r)
+;;  (...
+;;    (Class-fn (roster-classname r))
+;;    (LOS-fn (roster-listofstudent r))))
+
+;;ListOfRoster
+;;--empty ->list without roster
+;;--(cons roster ListOfRoster) ->list representing first item is roster
+;;and rest of the list.
+
+;;TEMPLATE
+;;LOR-fn : LOR -> ?
+;;(define (LOR-fn lor)
+;; (cond
+;;   [(empty? lor) ...]
+;;    [else (... 
+;;     (roster-fn (first lor))
+;;     (LOR-fn (rest lor)))]))
+
+
+
+
+
+
+
+
+
+

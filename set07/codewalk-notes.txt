@@ -1,0 +1,37 @@
+TA-1 Name:- Jai
+TA-2 Name:- Abhay
+
+Design Grade for q1:- AB
+Design Grade for q2:- A
+Correctness Score for q1:- 13/15
+Correctness Score for q2:- 14/15
+
+TA Comments on Design for q1:-
+- implement HOF for program-to-strings
+- write contract and purpose for the complex lambda defintions
+- create-space purpose should have been more informative
+- avoid magic constants
+- format header should have had invariant 
+- use helper functions to simplfy funcition definitions
+
+suggestions for q1:
+- format header helper functions can rather be a generalized function
+- use locals to make function definitions simpler
+
+TA Comments on Design for q2:-
+- HOF implementation is missing for process-instructions
+- avoid magic constants
+
+suggestions for q2
+- apply conds on the direction change only with one make probe call
+- generalize your code (for move-forward-west /east/north/south)
+
+Student1 CCIS ID:- meghna
+Presentation Grade:- A
+TA Comments on Presentation:-
+- keep up the good work.
+
+Student2 CCIS ID:- kent
+Presentation Grade:- A
+TA Comments on Presentation:-
+- good knowledge of the course material.

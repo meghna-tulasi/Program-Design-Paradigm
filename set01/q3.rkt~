@@ -1,0 +1,36 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname q3) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require rackunit)
+(require "extras.rkt")
+(require 2htdp/image)
+
+(provide image-area)
+
+
+;;Data Definitions:None
+
+
+;; image-area : String Image -> PosInt
+ ;; GIVEN:  an Image and Image Name
+ ;; RETURNS: Area of the Image in pixels
+       
+;;Examples:
+  ;;(image-area (circle 10 "solid" "red") = 400
+  ;;(image-area (rectangle 10 20 "solid" "blue") = 200
+  ;;(image-area (star 5 "solid" "yellow") = 64
+  
+  
+;;DESIGN STRATEGY: Composing a Function
+
+(define (image-area ()
+  (* (image-width imgname) (image-height imgname)))
+
+
+;; TESTS
+
+(begin-for-test
+ (check-equal?
+ (image-area circle ) 20 "Area of the given image is 20.")))
+ 
+ 

@@ -1,0 +1,218 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname probe) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require rackunit)
+(require "extras.rkt")
+(check-location "02" "probe.rkt")
+
+(provide
+ probe-at
+probe-turned-left
+probe-turned-right
+probe-direction-equal?
+probe-location-equal?
+probe-forward-possible-outcome?)
+
+;;DATA DEFINITIONS:
+
+(define-struct probe(x y direction))
+ 
+;;Probe is a
+;;(make-probe Integer Integer String)
+;;INTERPRETATION:
+;;x -> x-coordinate of probe
+;;y -> y-coordinate of probe
+;;direction is the direction to which probe faces and takes value from:
+;;north,south,east,west.
+
+;;probe-fn : Probe -> ??
+#;(define (probe-fn pb)
+  (...
+   (probe-x pb)
+   (probe-y pb)
+   (probe-direction pb)))
+
+;;probe-at: Integer Integer -> Probe
+;;GIVEN: an x-coordinate and a y-coordinate
+;;RETURNS: a probe with its center at those coordinates, facing north.
+;;EXAMPLES:
+;;(probe-at 10 10) -> (make-probe 10 10 "north")
+;;DESIGN-STRATEGY: Using template of probe
+
+(define (probe-at x y)
+  (make-probe x y "north"))
+
+
+;;probe-turned-left : Probe -> Probe
+;;GIVEN: a probe
+;;RETURNS: a probe like the original, but turned 90 degrees left
+;;EXAMPLES:
+;;(probe-turned-left (make-probe 10 10 "north")) -> (make-probe 10 10 "west"))
+;;(probe-turned-left (make-probe 10 10 "west")) -> (make-probe 10 10 "south"))
+;;;;(probe-turned-left (make-probe 10 10 "south")) -> (make-probe 10 10 "east"))
+;;(probe-turned-left (make-probe 10 10 "east")) -> (make-probe 10 10 "north"))
+
+;;DESIGN-STRATEGY: Dividing into cases
+
+(define (probe-turned-left pb)
+  (cond
+    [(string=? (probe-direction pb) "north") (make-probe (probe-x pb) (probe-y pb) "west")]
+     [(string=? (probe-direction pb) "west") (make-probe (probe-x pb) (probe-y pb) "south")]
+      [(string=? (probe-direction pb) "south") (make-probe (probe-x pb) (probe-y pb) "east")]
+       [(string=? (probe-direction pb) "east")(make-probe (probe-x pb) (probe-y pb) "north")]))
+
+
+;;probe-turned-right : Probe -> Probe
+;;GIVEN: a probe
+;;RETURNS: a probe like the original, but turned 90 degrees right.
+;;EXAMPLES:
+;;(probe-turned-right (make-probe 10 10 "north")) -> (make-probe 10 10 "east"))
+;;(probe-turned-right (make-probe 10 10 "east")) -> (make-probe 10 10 "south"))
+;;;;(probe-turned-right (make-probe 10 10 "south")) -> (make-probe 10 10 "west"))
+;;(probe-turned-right (make-probe 10 10 "west")) -> (make-probe 10 10 "north"))
+
+;;DESIGN-STRATEGY: Dividing into cases
+
+(define (probe-turned-right pb)
+  (cond
+    [(string=? (probe-direction pb) "north") (make-probe (probe-x pb) (probe-y pb) "east")]
+     [(string=? (probe-direction pb) "east") (make-probe (probe-x pb) (probe-y pb) "south")]
+      [(string=? (probe-direction pb) "south") (make-probe (probe-x pb) (probe-y pb) "west")]
+       [(string=? (probe-direction pb) "west") (make-probe (probe-x pb) (probe-y pb) "north")]))
+
+;;probe-direction-equal? : Probe Probe -> Boolean
+;;GIVEN: two probes
+;;RETURNS: true iff the two probes are facing in the same direction,
+;;else false
+;;EXAMPLES:
+;;(probe-direction-equal? (make-probe 10 10 "north")(make-probe 4 4 "north")) -> true
+;;(probe-direction-equal? (make-probe 10 10 "north")(make-probe 4 4 "east")) -> false
+
+;;DESIGN-STRATEGY: Composing a function where directions of two probes are checked.
+
+(define (probe-direction-equal? pb1 pb2)
+  (string=? (probe-direction pb1) (probe-direction pb2)))
+
+;;probe-location-equal? : Probe Probe -> Boolean
+;;GIVEN: two probles
+;;RETURNS: true iff the two probes are at the same location
+  
+;;EXAMPLES:
+;;(probe-location-equal? (make-probe 10 10 "north")(make-probe 4 4 "north")) -> false
+;;(probe-location-equal? (make-probe 10 10 "north")(make-probe 10 10 "east")) -> true
+;;DESIGN-STRATEGY: Composing function where the location that is
+;;x and y coordinates of the two probes are checked if they are at the same location.
+
+(define (probe-location-equal? pb1 pb2)
+  (and
+    (equal? (probe-x pb1) (probe-x pb2))
+    (equal? (probe-y pb1) (probe-y pb2))))
+  
+
+;;probe-forward-possible-outcome? : Probe PosInt Probe -> Boolean
+;;GIVEN: two probes and a distance
+;;RETURNS: true iff the first probe, given a move-forward command with
+;;the specified number of steps, could wind up in the state described by
+;;the second probe.
+;;EXAMPLES:
+;;(probe-forward-possible-outcome? (make-probe 10 10 "north") 1 (make-probe 10 9 "north")) -> true
+;;(probe-forward-possible-outcome? (make-probe 10 10 "south") 1 (make-probe 10 11 "south")) -> true
+
+;;DESIGN-STRATEGY: Dividing into cases whether the probe moves forward
+                   ;;in direction of north or south
+
+(define (probe-forward-possible-outcome? pb1 distance pb2)
+  (cond
+    [(string=? (probe-direction pb1) "north") (probe-check-north pb1 distance pb2)]
+    [(string=? (probe-direction pb1) "west") (probe-check-west pb1 distance pb2)]
+    [(string=? (probe-direction pb1) "south") (probe-check-south pb1 distance pb2)]
+    [(string=? (probe-direction pb1) "east") (probe-check-east pb1 distance pb2)]))
+
+;;probe-check-north : Probe PosInt Probe -> Boolean
+;;GIVEN: two probes and a distance
+;;RETURNS: true iff the y coordinate of a probe matches the second probe
+;;EXAMPLES:
+;;(probe-check-north (make-probe 10 10 "north") 2 (make-probe 10 8  "north") -> true
+;;DESIGN-STRATEGY: Composing a function
+(define (probe-check-north pb1 distance pb2)
+  
+   (equal? (- (probe-y pb1) distance) (probe-y pb2)))
+
+;;probe-check-south : Probe PosInt Probe -> Boolean
+;;GIVEN: two probes and a distance
+;;RETURNS: true iff the y coordinate of a probe matches the second probe
+;;EXAMPLES:
+;;(probe-check-south (make-probe 10 10 "south") 2 (make-probe 10 8  "south") -> false
+;;DESIGN-STRATEGY: Composing a function
+(define (probe-check-south pb1 distance pb2)
+  
+   (equal? (+ (probe-y pb1) distance) (probe-y pb2)))
+
+;;probe-check-west : Probe PosInt Probe -> Boolean
+;;GIVEN: two probes and a distance
+;;RETURNS: true iff the x coordinate of a probe matches the second probe
+;;EXAMPLES:
+;;(probe-check-west (make-probe 10 10 "west") 2 (make-probe 8 10  "west") -> true
+;;DESIGN-STRATEGY: Composing a function
+(define (probe-check-west pb1 distance pb2)
+  
+   (equal? (- (probe-x pb1) distance) (probe-x pb2)))
+
+;;probe-check-east : Probe PosInt Probe -> Boolean
+;;GIVEN: two probes and a distance
+;;RETURNS: true iff the x coordinate of a probe matches the second probe
+;;EXAMPLES:
+;;(probe-check-east (make-probe 10 10 "east") 2 (make-probe 12 10 "east") -> true
+;;DESIGN-STRATEGY: Composing a function
+(define (probe-check-east pb1 distance pb2)
+  
+   (equal? (+ (probe-x pb1) distance) (probe-x pb2)))
+
+
+
+;;TESTS:
+(begin-for-test
+  (check-equal? (probe-at 10 10) (make-probe 10 10 "north")
+                "Should return Probe facing north")
+  (check-equal? (probe-turned-left (probe-at 10 10)) (make-probe 10 10 "west") 
+                "Should return probe facing  west")
+  
+  (check-equal? (probe-turned-left (make-probe 10 10 "west")) (make-probe 10 10 "south") 
+                "Should return probe facing  south")
+  
+   (check-equal? (probe-turned-left (make-probe 10 10 "south")) (make-probe 10 10 "east") 
+                "Should return probe facing  east")
+
+   (check-equal? (probe-turned-left (make-probe 10 10 "east")) (make-probe 10 10 "north") 
+                "Should return probe facing  north")
+   
+   (check-equal? (probe-turned-right (probe-at 3 3)) (make-probe 3 3 "east")
+                "Should return probe facing  east")
+   (check-equal? (probe-turned-right (make-probe 10 10 "east")) (make-probe 10 10 "south") 
+                "Should return probe facing  south")
+   (check-equal? (probe-turned-right (make-probe 10 10 "south")) (make-probe 10 10 "west") 
+                "Should return probe facing  west")
+   (check-equal? (probe-turned-right (make-probe 10 10 "west")) (make-probe 10 10 "north") 
+                "Should return probe facing  north")
+   (check-equal? (probe-direction-equal? (probe-turned-left (probe-at 10 10))
+                 (probe-turned-right (probe-at 4 4))) false "Should return false")
+   
+   (check-equal? (probe-location-equal? (probe-at 10 10) (probe-at 10 10)) true
+                 "Should return true")
+    (check-equal? (probe-forward-possible-outcome? (probe-turned-left(probe-turned-left(probe-turned-left (probe-at 10 10)))) 1
+                 (probe-turned-right (probe-at 11 10)))true "Should return true")
+    (check-equal? (probe-forward-possible-outcome? (probe-turned-left (probe-at 10 10)) 1
+                 (probe-turned-right (probe-at 10 9)))false "Should return false")
+   (check-equal? (probe-forward-possible-outcome? (probe-at 10 10) 1
+                 (probe-at 10 9)) true "Should return true")
+    (check-equal? (probe-forward-possible-outcome? (probe-turned-left(probe-turned-left(probe-at 10 10))) 1
+             (probe-turned-right(probe-turned-right(probe-at 10 11))))
+                  true "Should return true"))
+
+    
+
+   
+   
+  
+  
+  

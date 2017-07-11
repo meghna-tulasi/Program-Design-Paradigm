@@ -1,0 +1,19 @@
+TA-1 Name:- Parth Bansal
+TA-2 Name:- Amit N
+
+Design Grade:- A
+Correctness Score:- 15/15
+TA Comments on Design:-
+1. Do you really need to define a struct for World? You could just say 'World is a ListOfTrees'.
+2. Missing error messages for test cases.
+
+Student1 CCIS ID:- meghnatulasi9
+Presentation Grade:- A
+TA Comments on Presentation:-
+1. How would you handle adding another shape say triangle. You have represented circle? in the struct which is not scalable.
+
+Student2 CCIS ID:- kent4thhu
+Presentation Grade:- A
+TA Comments on Presentation:-
+1. How would you handle adding another shape say triangle. You have represented circle? in the struct which is not scalable.
+2. You really have very good presentation skills. Keep up the good work.
